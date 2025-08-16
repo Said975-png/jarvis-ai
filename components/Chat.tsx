@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import TypewriterText from './TypewriterText'
 
 interface Message {
   text: string
