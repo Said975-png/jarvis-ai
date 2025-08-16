@@ -46,9 +46,6 @@ export default function Chat({ messages, setMessages }: ChatProps) {
       <div className="chat-messages">
         {messages.map((message, index) => (
           <div key={index} className={`message ${message.isUser ? 'user-message' : 'ai-message'}`}>
-            <div className="message-avatar">
-              {message.isUser ? '👤' : '🤖'}
-            </div>
             <div className="message-content">
               <div className="message-text">{message.text}</div>
             </div>
@@ -57,7 +54,6 @@ export default function Chat({ messages, setMessages }: ChatProps) {
         
         {isLoading && (
           <div className="message ai-message">
-            <div className="message-avatar">🤖</div>
             <div className="message-content">
               <div className="typing-indicator">
                 <span></span>
