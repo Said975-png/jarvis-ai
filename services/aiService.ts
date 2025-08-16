@@ -26,7 +26,7 @@ class AIService {
   private async makeOpenRouterRequest(messages: AIMessage[]): Promise<string> {
     const systemPrompt: AIMessage = {
       role: 'system',
-      content: `Ты Jarvis - умный AI-ассистент, созданный для помощи пользователям в разработке и создании проектов. 
+      content: `Ты Jarvis - умный AI-ассистент, созданный для помощи пользователям в разработке и создании проектов.
 
 Ключевые принципы:
 - Отвечай ТОЛЬКО на русском языке
@@ -36,107 +36,126 @@ class AIService {
 - Предлагай практические решения и примеры кода
 - Используй современные технологии и лучшие практики
 
-Помни: ты ��аходишься в интерфейсе похожем на v0.dev, поэтому пользователи ожидают помощи в создании веб-приложений и интерфейсов.`
+Помни: ты находишься в интерфейсе похожем на v0.dev, поэтому пользователи ожидают помощи в создании веб-приложений и интерфейсов.`
     }
 
     const allMessages = [systemPrompt, ...messages]
 
-    for (let attempt = 0; attempt < this.openrouterKeys.length; attempt++) {
-      try {
-        const apiKey = this.getNextOpenRouterKey()
-        
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': 'https://localhost:3000',
-            'X-Title': 'V0 Clone AI Assistant'
-          },
-          body: JSON.stringify({
-            model: 'meta-llama/llama-3.1-8b-instruct:free',
-            messages: allMessages,
-            temperature: 0.7,
-            max_tokens: 1000,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0
+    // Список надежных бесплатных моделей в порядке приоритета
+    const models = [
+      'mistralai/mistral-7b-instruct:free',
+      'huggingface/zephyr-7b-beta:free',
+      'openchat/openchat-7b:free',
+      'gryphe/mythomist-7b:free'
+    ]
+
+    for (let modelIndex = 0; modelIndex < models.length; modelIndex++) {
+      for (let keyAttempt = 0; keyAttempt < Math.min(3, this.openrouterKeys.length); keyAttempt++) {
+        try {
+          const apiKey = this.getNextOpenRouterKey()
+
+          const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json',
+              'HTTP-Referer': 'https://localhost:3000',
+              'X-Title': 'V0 Clone AI Assistant'
+            },
+            body: JSON.stringify({
+              model: models[modelIndex],
+              messages: allMessages,
+              temperature: 0.7,
+              max_tokens: 1000,
+              top_p: 1,
+              frequency_penalty: 0,
+              presence_penalty: 0
+            })
           })
-        })
 
-        if (!response.ok) {
-          console.error(`OpenRouter API error (key ${attempt + 1}):`, response.status, response.statusText)
-          continue
-        }
+          if (!response.ok) {
+            console.error(`OpenRouter error (model: ${models[modelIndex]}, key ${keyAttempt + 1}):`, response.status, response.statusText)
+            continue
+          }
 
-        const data = await response.json()
-        
-        if (data.choices && data.choices[0] && data.choices[0].message) {
-          return data.choices[0].message.content
-        }
-        
-        throw new Error('Invalid response format from OpenRouter')
-      } catch (error) {
-        console.error(`OpenRouter attempt ${attempt + 1} failed:`, error)
-        if (attempt === this.openrouterKeys.length - 1) {
-          throw error
+          const data = await response.json()
+
+          if (data.choices && data.choices[0] && data.choices[0].message) {
+            return data.choices[0].message.content
+          }
+
+          throw new Error('Invalid response format from OpenRouter')
+        } catch (error) {
+          console.error(`OpenRouter attempt failed (model: ${models[modelIndex]}, key ${keyAttempt + 1}):`, error)
         }
       }
     }
-    
-    throw new Error('All OpenRouter keys failed')
+
+    throw new Error('All OpenRouter models and keys failed')
   }
 
   private async makeGroqRequest(messages: AIMessage[]): Promise<string> {
     const systemPrompt: AIMessage = {
       role: 'system',
-      content: `Ты Jarvis - умный AI-ассистент, созданный для помощи пользователям в разработке и создании проектов.
+      content: `Ты Jarvis - умны�� AI-ассистент, созданный для помощи пользователям в разработке и создании проектов.
 
 Ключевые принципы:
 - Отвечай ТОЛЬКО на русском языке
-- Будь дружелюбным и профессиональным  
+- Будь дружелюбным и профессиональным
 - Помогай с программированием, дизайном, и техническими вопросами
 - Если не знаешь точного ответа, честно скажи об этом
 - Предлагай практические решения и примеры кода
-- Используй современные технологии и ��учшие практики
+- Используй современные технологии и лучшие практики
 
 Помни: ты находишься в интерфейсе похожем на v0.dev, поэтому пользователи ожидают помощи в создании веб-приложений и интерфейсов.`
     }
 
     const allMessages = [systemPrompt, ...messages]
 
-    try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.groqKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'llama-3.1-70b-versatile',
-          messages: allMessages,
-          temperature: 0.7,
-          max_tokens: 1000,
-          top_p: 1,
-          stream: false
+    // Список моделей Groq в порядке приоритета
+    const models = [
+      'llama3-8b-8192',
+      'llama3-70b-8192',
+      'mixtral-8x7b-32768',
+      'gemma-7b-it'
+    ]
+
+    for (const model of models) {
+      try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.groqKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: allMessages,
+            temperature: 0.7,
+            max_tokens: 1000,
+            top_p: 1,
+            stream: false
+          })
         })
-      })
 
-      if (!response.ok) {
-        throw new Error(`Groq API error: ${response.status} ${response.statusText}`)
-      }
+        if (!response.ok) {
+          console.error(`Groq API error with model ${model}:`, response.status, response.statusText)
+          continue
+        }
 
-      const data = await response.json()
-      
-      if (data.choices && data.choices[0] && data.choices[0].message) {
-        return data.choices[0].message.content
+        const data = await response.json()
+
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+          return data.choices[0].message.content
+        }
+
+        throw new Error(`Invalid response format from Groq with model ${model}`)
+      } catch (error) {
+        console.error(`Groq request failed with model ${model}:`, error)
       }
-      
-      throw new Error('Invalid response format from Groq')
-    } catch (error) {
-      console.error('Groq request failed:', error)
-      throw error
     }
+
+    throw new Error('All Groq models failed')
   }
 
   async generateResponse(messages: AIMessage[]): Promise<string> {
