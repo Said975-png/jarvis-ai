@@ -352,26 +352,30 @@ body {
 }
 
 .action-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  max-width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  max-width: 700px;
   margin: 0 auto;
+  flex-wrap: wrap;
 }
 
 .action-btn {
   background-color: #1a1a1a;
   border: 1px solid #2a2a2a;
   color: #fff;
-  padding: 16px 20px;
-  border-radius: 25px;
+  padding: 8px 12px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
+  min-width: fit-content;
 }
 
 .action-btn:hover {
@@ -380,7 +384,7 @@ body {
 }
 
 .btn-icon {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .community-section {
