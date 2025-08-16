@@ -23,20 +23,43 @@ class AIService {
     return key
   }
 
+  private validateRussianResponse(response: string): string {
+    // Проверяем и испра��ляем символы не из кириллицы
+    const cleanResponse = response
+      .replace(/[^\u0400-\u04FF\u0500-\u052F\s\d\p{P}]/gu, '') // Удаляем не-кириллические символы кроме пробелов, цифр и пунктуации
+      .replace(/\s+/g, ' ') // Убираем лишние пробелы
+      .trim()
+
+    // Если ответ стал слишком коротким после очистки, возвращаем стандартный ответ
+    if (cleanResponse.length < 10) {
+      return 'Привет! Я Jarvis, ваш помощник в разработке. Как могу помочь?'
+    }
+
+    return cleanResponse
+  }
+
   private async makeOpenRouterRequest(messages: AIMessage[]): Promise<string> {
     const systemPrompt: AIMessage = {
       role: 'system',
-      content: `Ты Jarvis - умный AI-ассистент, созданный для помощи пользователям в разработке и создании проектов.
+      content: `You are Jarvis, a smart AI assistant designed to help users with development and creating projects.
 
-Ключевые принципы:
-- Отвечай ТОЛЬКО на русском языке
-- Будь дружелюбным и профессиональным
-- Помогай с программированием, дизайном, и техническими вопросами
-- Если не знаешь точного ответа, честно скажи об этом
-- Предлагай практические решения и примеры кода
-- Используй современные технологии и лучшие практики
+CRITICAL LANGUAGE REQUIREMENTS:
+- Respond EXCLUSIVELY in Russian language (русский язык)
+- Use ONLY Cyrillic characters (кириллица)
+- Never mix languages or use characters from other alphabets
+- Never use Chinese, English, or any other language characters
+- All words must be in proper Russian
 
-Помни: ты находишься в интерфейсе похожем на v0.dev, поэтому пользователи ожидают помощи в создании веб-приложений и интерфейсов.`
+Your personality:
+- Be friendly and professional
+- Help with programming, design, and technical questions
+- If you don't know the exact answer, be honest about it
+- Suggest practical solutions and code examples
+- Use modern technologies and best practices
+
+Context: You are in a v0.dev-like interface, so users expect help with creating web applications and interfaces.
+
+Remember: Write everything in Russian using only Cyrillic alphabet. No exceptions.`
     }
 
     const allMessages = [systemPrompt, ...messages]
@@ -53,7 +76,7 @@ class AIService {
       for (let keyAttempt = 0; keyAttempt < Math.min(3, this.openrouterKeys.length); keyAttempt++) {
         try {
           const apiKey = this.getNextOpenRouterKey()
-
+          
           const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -79,35 +102,43 @@ class AIService {
           }
 
           const data = await response.json()
-
+          
           if (data.choices && data.choices[0] && data.choices[0].message) {
             return data.choices[0].message.content
           }
-
+          
           throw new Error('Invalid response format from OpenRouter')
         } catch (error) {
           console.error(`OpenRouter attempt failed (model: ${models[modelIndex]}, key ${keyAttempt + 1}):`, error)
         }
       }
     }
-
+    
     throw new Error('All OpenRouter models and keys failed')
   }
 
   private async makeGroqRequest(messages: AIMessage[]): Promise<string> {
     const systemPrompt: AIMessage = {
       role: 'system',
-      content: `Ты Jarvis - умный AI-ассистент, созданный для помощи пользователям в разработке и создании проектов.
+      content: `You are Jarvis, a smart AI assistant designed to help users with development and creating projects.
 
-Ключевые принципы:
-- Отвечай ТОЛЬКО на русском языке
-- Будь дружелюбным и профессиональным
-- Помогай с программированием, дизайном, и техническими вопросами
-- Если не знаешь точного ответа, честно скажи об этом
-- Предлагай практические решения и примеры кода
-- Используй современные технологии и лучшие практики
+ABSOLUTE LANGUAGE REQUIREMENTS:
+- Respond ONLY in Russian language using Cyrillic alphabet
+- Never use characters from Chinese, English, Arabic, or any other writing systems
+- Every single character must be from the Russian Cyrillic alphabet
+- Double-check every word before responding to ensure it's proper Russian
+- If you accidentally use wrong characters, correct them immediately
 
-Помни: ты находишься в интерфейсе похожем на v0.dev, поэтому пользователи о��идают помощи в создании веб-приложений и интерфейсов.`
+Your role:
+- Be friendly and professional
+- Help with programming, design, and technical questions  
+- If you don't know the exact answer, be honest about it
+- Suggest practical solutions and code examples
+- Use modern technologies and best practices
+
+Context: You are in a v0.dev-like interface, so users expect help with creating web applications and interfaces.
+
+MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characters.`
     }
 
     const allMessages = [systemPrompt, ...messages]
@@ -147,33 +178,18 @@ class AIService {
         }
 
         const data = await response.json()
-
+        
         if (data.choices && data.choices[0] && data.choices[0].message) {
           return data.choices[0].message.content
         }
-
+        
         throw new Error(`Invalid response format from Groq with model ${model}`)
       } catch (error) {
         console.error(`Groq request failed with model ${model}:`, error)
       }
     }
-
+    
     throw new Error('All Groq models failed')
-  }
-
-  private validateRussianResponse(response: string): string {
-    // Проверяем и исправляем символы не из кириллицы
-    const cleanResponse = response
-      .replace(/[^\u0400-\u04FF\u0500-\u052F\s\d\p{P}]/gu, '') // Удаляем не-кириллические символы кроме пробелов, цифр и пунктуации
-      .replace(/\s+/g, ' ') // Убираем лишние пробелы
-      .trim()
-
-    // Если ответ стал слишком коротким после очистки, возвращаем стандартный ответ
-    if (cleanResponse.length < 10) {
-      return 'Привет! Я Jarvis, ваш помощник в разработке. Как могу помочь?'
-    }
-
-    return cleanResponse
   }
 
   async generateResponse(messages: AIMessage[]): Promise<string> {
@@ -183,7 +199,7 @@ class AIService {
       return this.validateRussianResponse(response)
     } catch (groqError) {
       console.log('Groq failed, trying OpenRouter...', groqError)
-
+      
       // Если Groq не работает, используем OpenRouter
       try {
         const response = await this.makeOpenRouterRequest(messages)
