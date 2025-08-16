@@ -64,18 +64,23 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
 
         {/* Tabs */}
         <div className="auth-tabs">
-          <button 
+          <button
             className={`auth-tab ${activeTab === 'login' ? 'active' : ''}`}
             onClick={() => setActiveTab('login')}
           >
-            Вход
+            Sign in
           </button>
-          <button 
+          <button
             className={`auth-tab ${activeTab === 'register' ? 'active' : ''}`}
             onClick={() => setActiveTab('register')}
           >
-            Регистрация
+            Sign up
           </button>
+        </div>
+
+        {/* Title */}
+        <div className="auth-title">
+          <h2>{activeTab === 'register' ? 'Create an account' : 'Welcome back'}</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
