@@ -532,32 +532,34 @@ body {
   background: #ffffff;
   border: 1px solid #e5e5e5;
   border-radius: 16px;
-  padding: 40px;
+  padding: 40px 40px 40px 40px;
+  padding-top: 60px;
   max-width: 400px;
-  min-height: 480px;
+  height: 520px;
   width: 100%;
   position: relative;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
 }
 
 .auth-modal-close {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 16px;
+  right: 16px;
   background: #f8f9fa;
   border: 1px solid #e5e5e5;
   color: #666;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
   transition: all 0.2s;
-  z-index: 10;
+  z-index: 100;
 }
 
 .auth-modal-close:hover {
@@ -634,8 +636,15 @@ body {
   top: 50%;
   transform: translateY(-50%);
   color: #666;
-  font-size: 16px;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-icon svg {
+  width: 16px;
+  height: 16px;
 }
 
 .form-input {
@@ -668,14 +677,21 @@ body {
   background: none;
   border: none;
   color: #666;
-  font-size: 16px;
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .password-toggle:hover {
   color: #333;
+}
+
+.password-toggle svg {
+  width: 16px;
+  height: 16px;
 }
 
 .password-strength {
@@ -839,8 +855,14 @@ body {
 }
 
 .social-icon {
-  font-weight: bold;
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icon svg {
+  width: 16px;
+  height: 16px;
 }
 
 .error-text {
@@ -874,8 +896,9 @@ body {
 
   .auth-modal-card {
     padding: 28px;
+    padding-top: 48px;
     border-radius: 12px;
-    min-height: 450px;
+    height: 480px;
   }
 
   .auth-title h2 {
