@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Header from './Header'
 
 interface MainContentProps {
   onStartChat: (message: string) => void
@@ -18,6 +19,7 @@ export default function MainContent({ onStartChat }: MainContentProps) {
 
   return (
     <main className="main-content">
+      <Header />
       <div className="content-wrapper">
         <div className="hero-section">
           <h1 className="hero-title">What can I help you build?</h1>
