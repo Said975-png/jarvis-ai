@@ -512,14 +512,15 @@ body {
   font-size: 16px;
 }
 
-/* Auth Modal Styles - Modern Gradient */
+/* Auth Modal Styles - Strict Black & White */
 .auth-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -528,67 +529,66 @@ body {
 }
 
 .auth-modal-card {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  padding: 32px;
-  max-width: 440px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 420px;
   width: 100%;
   position: relative;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 .auth-modal-close {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  top: 16px;
+  right: 16px;
+  background: #f8f9fa;
+  border: 1px solid #e5e5e5;
+  color: #666;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   transition: all 0.2s;
 }
 
 .auth-modal-close:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: rotate(90deg);
+  background: #e9ecef;
+  color: #333;
 }
 
 .auth-tabs {
   display: flex;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50px;
-  padding: 6px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 4px;
   margin-bottom: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #e5e5e5;
 }
 
 .auth-tab {
   flex: 1;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
-  padding: 14px 20px;
-  border-radius: 50px;
-  font-size: 15px;
+  color: #666;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .auth-tab.active {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  color: #000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .auth-title {
@@ -597,11 +597,10 @@ body {
 }
 
 .auth-title h2 {
-  font-size: 28px;
-  font-weight: 700;
-  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
   margin: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .auth-form {
@@ -613,13 +612,13 @@ body {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .form-label {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 15px;
-  font-weight: 600;
+  color: #000;
+  font-size: 14px;
+  font-weight: 500;
   margin-bottom: 4px;
 }
 
@@ -629,36 +628,34 @@ body {
 
 .input-icon {
   position: absolute;
-  left: 16px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 18px;
+  color: #666;
+  font-size: 16px;
   pointer-events: none;
 }
 
 .form-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  padding: 16px 50px;
-  color: white;
-  font-size: 15px;
-  min-height: 56px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 14px 44px;
+  color: #000;
+  font-size: 14px;
+  min-height: 48px;
   outline: none;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
 }
 
 .form-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: #999;
 }
 
 .form-input:focus {
-  border-color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
 .password-toggle {
@@ -668,7 +665,7 @@ body {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.5);
+  color: #666;
   font-size: 16px;
   cursor: pointer;
   padding: 4px;
@@ -676,7 +673,7 @@ body {
 }
 
 .password-toggle:hover {
-  color: rgba(255, 255, 255, 0.8);
+  color: #333;
 }
 
 .password-strength {
@@ -688,23 +685,22 @@ body {
 
 .strength-bar {
   flex: 1;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
+  height: 4px;
+  background: #f1f3f4;
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .strength-fill {
   height: 100%;
-  background: linear-gradient(to right, #ef4444, #f59e0b, #10b981);
-  transition: width 0.4s ease;
-  border-radius: 3px;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(to right, #dc3545, #fd7e14, #28a745);
+  transition: width 0.3s ease;
+  border-radius: 2px;
 }
 
 .strength-text {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 13px;
+  color: #666;
+  font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
 }
@@ -726,57 +722,53 @@ body {
 .checkbox-wrapper input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: rgba(255, 255, 255, 0.3);
+  accent-color: #000;
 }
 
 .checkbox-text {
-  color: rgba(255, 255, 255, 0.7);
+  color: #666;
   font-size: 14px;
 }
 
 .forgot-password {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: #666;
   font-size: 14px;
   cursor: pointer;
   text-decoration: underline;
 }
 
 .forgot-password:hover {
-  color: white;
+  color: #000;
 }
 
 .submit-button {
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000;
   border: none;
-  color: white;
-  padding: 16px 20px;
-  border-radius: 16px;
-  font-size: 16px;
-  font-weight: 600;
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  min-height: 56px;
+  transition: all 0.2s ease;
+  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+  gap: 8px;
   margin: 8px 0;
 }
 
 .submit-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  background: #333;
 }
 
 .submit-button:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
 }
 
 .loading-spinner {
@@ -805,55 +797,52 @@ body {
   left: 0;
   right: 0;
   height: 1px;
-  background: rgba(255, 255, 255, 0.2);
+  background: #e5e5e5;
 }
 
 .social-divider span {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(20px);
-  color: rgba(255, 255, 255, 0.8);
-  padding: 0 20px;
+  background: #ffffff;
+  color: #666;
+  padding: 0 16px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .social-buttons {
   display: flex;
-  gap: 16px;
+  gap: 12px;
 }
 
 .social-button {
   flex: 1;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 14px 20px;
-  border-radius: 16px;
-  font-size: 15px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  color: #333;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-height: 52px;
-  backdrop-filter: blur(10px);
+  gap: 8px;
+  min-height: 44px;
 }
 
 .social-button:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+  background: #f8f9fa;
+  border-color: #ccc;
 }
 
 .social-icon {
   font-weight: bold;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .error-text {
-  color: #ef4444;
+  color: #dc3545;
   font-size: 12px;
   margin-top: 4px;
 }
@@ -882,28 +871,28 @@ body {
   }
 
   .auth-modal-card {
-    padding: 24px;
-    border-radius: 20px;
+    padding: 28px;
+    border-radius: 12px;
   }
 
   .auth-title h2 {
-    font-size: 24px;
+    font-size: 20px;
   }
 
   .form-input {
-    padding: 14px 44px;
-    min-height: 52px;
+    padding: 12px 40px;
+    min-height: 44px;
   }
 
   .submit-button {
-    padding: 14px 18px;
-    min-height: 52px;
-    font-size: 15px;
+    padding: 12px 16px;
+    min-height: 44px;
+    font-size: 14px;
   }
 
   .social-buttons {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   .content-wrapper {
