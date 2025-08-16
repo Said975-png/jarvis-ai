@@ -2,7 +2,11 @@
 
 import { useState } from 'react'
 
-export default function MainContent() {
+interface MainContentProps {
+  onStartChat: (message: string) => void
+}
+
+export default function MainContent({ onStartChat }: MainContentProps) {
   const [inputValue, setInputValue] = useState('')
 
   const actionButtons = [
@@ -31,7 +35,14 @@ export default function MainContent() {
                 <span className="action-icon">✦</span>
                 Agent
               </button>
-              <button className="submit-btn">
+              <button
+                className="submit-btn"
+                onClick={() => {
+                  if (inputValue.trim()) {
+                    onStartChat(inputValue.trim())
+                  }
+                }}
+              >
                 <span className="submit-icon">→</span>
               </button>
             </div>

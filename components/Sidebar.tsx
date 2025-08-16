@@ -1,6 +1,10 @@
 'use client'
 
-export default function Sidebar() {
+interface SidebarProps {
+  onNewChat: () => void
+}
+
+export default function Sidebar({ onNewChat }: SidebarProps) {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
