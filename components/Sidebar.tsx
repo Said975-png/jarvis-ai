@@ -5,7 +5,7 @@ export default function Sidebar() {
     <aside className="sidebar">
       <div className="sidebar-header">
         <div className="logo">
-          <div className="logo-icon">v0</div>
+          <div className="logo-icon">J1</div>
           <span className="plan-badge">Personal</span>
           <span className="free-badge">Free</span>
         </div>
