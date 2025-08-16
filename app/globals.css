@@ -422,20 +422,51 @@ body {
   border-radius: 8px;
 }
 
+.generate-image-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #2a2a2a;
+}
+
+.generate-image-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #00d4aa, #00b389);
+  border: none;
+  color: #000;
+  padding: 10px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.generate-image-btn:hover {
+  background: linear-gradient(135deg, #00b389, #009970);
+  transform: translateY(-1px);
+}
+
+.generate-icon {
+  font-size: 16px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .sidebar {
     display: none;
   }
-  
+
   .content-wrapper {
     padding: 40px 20px;
   }
-  
+
   .hero-title {
     font-size: 32px;
   }
-  
+
   .action-buttons {
     grid-template-columns: 1fr;
   }
