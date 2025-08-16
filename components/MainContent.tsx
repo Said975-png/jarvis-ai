@@ -22,7 +22,7 @@ export default function MainContent() {
             <div className="input-container">
               <input
                 type="text"
-                placeholder="Ask J1 to build..."
+                placeholder="Ask Jarvis to..."
                 className="main-input"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
