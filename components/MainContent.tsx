@@ -61,17 +61,6 @@ export default function MainContent({ onStartChat }: MainContentProps) {
             ))}
           </div>
         </div>
-        
-        <div className="community-section">
-          <div className="community-header">
-            <h2>From the Community</h2>
-            <button className="browse-all-btn">Browse All ›</button>
-          </div>
-          <p className="community-subtitle">Explore what the community is building with J1.</p>
-          <div className="community-content">
-            <div className="community-placeholder"></div>
-          </div>
-        </div>
       </div>
     </main>
   )
