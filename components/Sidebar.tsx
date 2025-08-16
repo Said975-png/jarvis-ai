@@ -21,7 +21,7 @@ export default function Sidebar({ onNewChat }: SidebarProps) {
       
       <div className="sidebar-content">
         <div className="new-chat-section">
-          <button className="new-chat-btn">
+          <button className="new-chat-btn" onClick={onNewChat}>
             <span className="icon">+</span>
             New Chat
           </button>
