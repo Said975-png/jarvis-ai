@@ -60,7 +60,7 @@ export default function Sidebar() {
 
           <div className="generate-image-section">
             <button className="generate-image-btn">
-              <span className="generate-icon">🎨</span>
+              <span className="generate-icon">◯</span>
               Generate image
             </button>
           </div>
