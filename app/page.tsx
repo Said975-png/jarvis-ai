@@ -10,17 +10,37 @@ export default function Home() {
   const [isChatMode, setIsChatMode] = useState(false)
   const [messages, setMessages] = useState<Array<{text: string, isUser: boolean}>>([])
 
-  const handleStartChat = (userMessage: string) => {
-    setMessages([{text: userMessage, isUser: true}])
+  const handleStartChat = async (userMessage: string) => {
+    const initialMessages = [{text: userMessage, isUser: true}]
+    setMessages(initialMessages)
     setIsChatMode(true)
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: initialMessages
+        }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.response) {
+          setMessages(prev => [...prev, { text: data.response, isUser: false }])
+        }
+      } else {
+        throw new Error('Failed to get AI response')
+      }
+    } catch (error) {
+      console.error('Error getting initial AI response:', error)
       setMessages(prev => [...prev, {
-        text: "Hello! I'm Jarvis, your AI assistant. How can I help you build something amazing today?",
+        text: "Привет! Я Jarvis, ваш AI-помощник. Как дела? Чем могу помочь в создании чего-то потрясающего?",
         isUser: false
       }])
-    }, 1000)
+    }
   }
 
   const handleNewChat = () => {

@@ -23,23 +23,41 @@ export default function Chat({ messages, setMessages }: ChatProps) {
 
     const userMessage = inputValue.trim()
     setInputValue('')
-    setMessages([...messages, { text: userMessage, isUser: true }])
+    const newMessages = [...messages, { text: userMessage, isUser: true }]
+    setMessages(newMessages)
     setIsLoading(true)
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "I understand your request. Let me help you with that!",
-        "That's an interesting question. Here's what I think...",
-        "Great idea! I can definitely help you build that.",
-        "Let me break this down for you step by step.",
-        "I'd be happy to assist you with this project!"
-      ]
-      
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)]
-      setMessages(prev => [...prev, { text: randomResponse, isUser: false }])
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: newMessages
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+
+      if (data.response) {
+        setMessages(prev => [...prev, { text: data.response, isUser: false }])
+      } else {
+        throw new Error('No response from AI service')
+      }
+    } catch (error) {
+      console.error('Error getting AI response:', error)
+      setMessages(prev => [...prev, {
+        text: 'Извините, произошла ошибка при получении ответа. Попробуйте еще раз.',
+        isUser: false
+      }])
+    } finally {
       setIsLoading(false)
-    }, 1500)
+    }
   }
 
   return (
