@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface AuthModalProps {
   isOpen: boolean
@@ -9,12 +10,13 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: AuthModalProps) {
+  const { login, register } = useAuth()
   const [activeTab, setActiveTab] = useState<'login' | 'register'>(initialTab)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -35,15 +37,71 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
 
   const passwordStrength = getPasswordStrength(formData.password)
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    if (!formData.email) {
+      newErrors.email = 'Email обязателен'
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Неверный формат email'
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Пароль обязателен'
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Пароль должен быть не менее 6 символов'
+    }
+
+    if (activeTab === 'register') {
+      if (!formData.fullName) {
+        newErrors.fullName = 'Имя обязательно'
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Пароли не совпадают'
+      }
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
     setIsLoading(true)
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    setIsLoading(false)
-    onClose()
+
+    try {
+      let success = false
+
+      if (activeTab === 'register') {
+        success = await register(formData.fullName, formData.email, formData.password)
+      } else {
+        success = await login(formData.email, formData.password)
+      }
+
+      if (success) {
+        onClose()
+        // Reset form
+        setFormData({
+          fullName: '',
+          email: '',
+          password: '',
+          confirmPassword: ''
+        })
+        setErrors({})
+      } else {
+        setErrors({ general: 'Ошибка аутентификации. Попробуйте снова.' })
+      }
+    } catch (error) {
+      setErrors({ general: 'Произошла ошибка. Попробуйте снова.' })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleInputChange = (field: string, value: string) => {
@@ -84,6 +142,12 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
+          {errors.general && (
+            <div className="error-banner">
+              {errors.general}
+            </div>
+          )}
+
           {activeTab === 'register' && (
             <div className="form-group">
               <label className="form-label">Полное имя</label>
@@ -230,7 +294,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
                 {activeTab === 'register' ? 'Создание аккаунта...' : 'Вход...'}
               </>
             ) : (
-              activeTab === 'register' ? 'Создать ак��аунт' : 'Войти'
+              activeTab === 'register' ? 'Создать аккаунт' : 'Войти'
             )}
           </button>
 
