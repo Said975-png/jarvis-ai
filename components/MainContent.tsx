@@ -56,7 +56,7 @@ export default function MainContent() {
             <h2>From the Community</h2>
             <button className="browse-all-btn">Browse All ›</button>
           </div>
-          <p className="community-subtitle">Explore what the community is building with v0.</p>
+          <p className="community-subtitle">Explore what the community is building with J1.</p>
           <div className="community-content">
             <div className="community-placeholder"></div>
           </div>
