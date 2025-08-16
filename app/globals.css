@@ -533,7 +533,8 @@ body {
   border: 1px solid #e5e5e5;
   border-radius: 16px;
   padding: 40px;
-  max-width: 420px;
+  max-width: 400px;
+  min-height: 480px;
   width: 100%;
   position: relative;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -541,8 +542,8 @@ body {
 
 .auth-modal-close {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 20px;
+  right: 20px;
   background: #f8f9fa;
   border: 1px solid #e5e5e5;
   color: #666;
@@ -556,6 +557,7 @@ body {
   font-size: 18px;
   line-height: 1;
   transition: all 0.2s;
+  z-index: 10;
 }
 
 .auth-modal-close:hover {
@@ -566,7 +568,7 @@ body {
 .auth-tabs {
   display: flex;
   background: #f8f9fa;
-  border-radius: 10px;
+  border-radius: 25px;
   padding: 4px;
   margin-bottom: 32px;
   border: 1px solid #e5e5e5;
@@ -578,7 +580,7 @@ body {
   border: none;
   color: #666;
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: 20px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -873,6 +875,7 @@ body {
   .auth-modal-card {
     padding: 28px;
     border-radius: 12px;
+    min-height: 450px;
   }
 
   .auth-title h2 {

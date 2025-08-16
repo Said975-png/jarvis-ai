@@ -88,7 +88,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
             <div className="form-group">
               <label className="form-label">Полное имя</label>
               <div className="input-wrapper">
-                <span className="input-icon">👤</span>
+                <span className="input-icon">👨</span>
                 <input
                   type="text"
                   placeholder="Введите ваше имя"
@@ -104,7 +104,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
           <div className="form-group">
             <label className="form-label">Email</label>
             <div className="input-wrapper">
-              <span className="input-icon">✉</span>
+              <span className="input-icon">@</span>
               <input
                 type="email"
                 placeholder="your@email.com"
@@ -119,7 +119,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
           <div className="form-group">
             <label className="form-label">Пароль</label>
             <div className="input-wrapper">
-              <span className="input-icon">🔒</span>
+              <span className="input-icon">🔑</span>
               <input
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Введите пароль"
@@ -155,7 +155,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
             <div className="form-group">
               <label className="form-label">Подтверждение пароля</label>
               <div className="input-wrapper">
-                <span className="input-icon">🔒</span>
+                <span className="input-icon">��</span>
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="Повторите пароль"
@@ -212,7 +212,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
               Google
             </button>
             <button type="button" className="social-button">
-              <span className="social-icon">⚡</span>
+              <span className="social-icon">⚬</span>
               GitHub
             </button>
           </div>
