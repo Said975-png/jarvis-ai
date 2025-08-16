@@ -26,19 +26,19 @@ export default function Sidebar() {
         
         <nav className="sidebar-nav">
           <div className="nav-item">
-            <span className="nav-icon">🔍</span>
+            <span className="nav-icon">⌕</span>
             Search
           </div>
           <div className="nav-item">
-            <span className="nav-icon">📁</span>
+            <span className="nav-icon">□</span>
             Projects
           </div>
           <div className="nav-item">
-            <span className="nav-icon">🕒</span>
+            <span className="nav-icon">⟲</span>
             Recents
           </div>
           <div className="nav-item">
-            <span className="nav-icon">👥</span>
+            <span className="nav-icon">⚬</span>
             Community
           </div>
         </nav>
@@ -63,7 +63,7 @@ export default function Sidebar() {
             </div>
             <div className="section-content">
               <div className="recent-item">
-                <span className="recent-icon">💬</span>
+                <span className="recent-icon">◊</span>
                 futureiscupanel1
               </div>
             </div>

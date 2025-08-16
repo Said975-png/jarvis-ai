@@ -6,10 +6,10 @@ export default function MainContent() {
   const [inputValue, setInputValue] = useState('')
 
   const actionButtons = [
-    { icon: '📷', text: 'Clone a Screenshot' },
-    { icon: '🎨', text: 'Import from Figma' },
-    { icon: '📤', text: 'Upload a Project' },
-    { icon: '🏠', text: 'Landing Page' }
+    { icon: '⧉', text: 'Clone a Screenshot' },
+    { icon: '◐', text: 'Import from Figma' },
+    { icon: '↑', text: 'Upload a Project' },
+    { icon: '⌂', text: 'Landing Page' }
   ]
 
   return (
@@ -28,7 +28,7 @@ export default function MainContent() {
                 onChange={(e) => setInputValue(e.target.value)}
               />
               <button className="input-action-btn">
-                <span className="action-icon">⚡</span>
+                <span className="action-icon">✦</span>
                 Agent
               </button>
               <button className="submit-btn">
