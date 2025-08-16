@@ -10,7 +10,6 @@ export default function Sidebar() {
           <span className="free-badge">Free</span>
         </div>
         <div className="user-actions">
-          <button className="upgrade-btn">Upgrade</button>
           <button className="feedback-btn">Feedback</button>
           <div className="credits">5.00</div>
         </div>
@@ -37,19 +36,9 @@ export default function Sidebar() {
             <span className="nav-icon">⟲</span>
             Recents
           </div>
-          <div className="nav-item">
-            <span className="nav-icon">⚬</span>
-            Community
-          </div>
         </nav>
         
         <div className="sidebar-sections">
-          <div className="section">
-            <div className="section-header">
-              <span>Favorite Projects</span>
-              <span className="chevron">›</span>
-            </div>
-          </div>
           <div className="section">
             <div className="section-header">
               <span>Favorite Chats</span>
