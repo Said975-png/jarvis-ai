@@ -23,7 +23,7 @@ body {
 /* Sidebar Styles */
 .sidebar {
   width: 260px;
-  background-color: #1a1a1a;
+  background-color: #000000;
   border-right: 1px solid #2a2a2a;
   display: flex;
   flex-direction: column;
