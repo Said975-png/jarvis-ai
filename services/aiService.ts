@@ -65,11 +65,11 @@ class AIService {
             body: JSON.stringify({
               model: models[modelIndex],
               messages: allMessages,
-              temperature: 0.7,
+              temperature: 0.5,
               max_tokens: 1000,
-              top_p: 1,
-              frequency_penalty: 0,
-              presence_penalty: 0
+              top_p: 0.9,
+              frequency_penalty: 0.1,
+              presence_penalty: 0.1
             })
           })
 
@@ -97,7 +97,7 @@ class AIService {
   private async makeGroqRequest(messages: AIMessage[]): Promise<string> {
     const systemPrompt: AIMessage = {
       role: 'system',
-      content: `Ты Jarvis - умны�� AI-ассистент, созданный для помощи пользователям в разработке и создании проектов.
+      content: `Ты Jarvis - умный AI-ассистент, созданный для помощи пользователям в разработке и создании проектов.
 
 Ключевые принципы:
 - Отвечай ТОЛЬКО на русском языке
@@ -107,7 +107,7 @@ class AIService {
 - Предлагай практические решения и примеры кода
 - Используй современные технологии и лучшие практики
 
-Помни: ты находишься в интерфейсе похожем на v0.dev, поэтому пользователи ожидают помощи в создании веб-приложений и интерфейсов.`
+Помни: ты находишься в интерфейсе похожем на v0.dev, поэтому пользователи о��идают помощи в создании веб-приложений и интерфейсов.`
     }
 
     const allMessages = [systemPrompt, ...messages]
@@ -131,10 +131,13 @@ class AIService {
           body: JSON.stringify({
             model: model,
             messages: allMessages,
-            temperature: 0.7,
+            temperature: 0.5,
             max_tokens: 1000,
-            top_p: 1,
-            stream: false
+            top_p: 0.9,
+            stream: false,
+            stop: null,
+            frequency_penalty: 0.1,
+            presence_penalty: 0.1
           })
         })
 
@@ -158,16 +161,33 @@ class AIService {
     throw new Error('All Groq models failed')
   }
 
+  private validateRussianResponse(response: string): string {
+    // Проверяем и исправляем символы не из кириллицы
+    const cleanResponse = response
+      .replace(/[^\u0400-\u04FF\u0500-\u052F\s\d\p{P}]/gu, '') // Удаляем не-кириллические символы кроме пробелов, цифр и пунктуации
+      .replace(/\s+/g, ' ') // Убираем лишние пробелы
+      .trim()
+
+    // Если ответ стал слишком коротким после очистки, возвращаем стандартный ответ
+    if (cleanResponse.length < 10) {
+      return 'Привет! Я Jarvis, ваш помощник в разработке. Как могу помочь?'
+    }
+
+    return cleanResponse
+  }
+
   async generateResponse(messages: AIMessage[]): Promise<string> {
     // Сначала пробуем Groq (более мощная модель)
     try {
-      return await this.makeGroqRequest(messages)
+      const response = await this.makeGroqRequest(messages)
+      return this.validateRussianResponse(response)
     } catch (groqError) {
       console.log('Groq failed, trying OpenRouter...', groqError)
-      
+
       // Если Groq не работает, используем OpenRouter
       try {
-        return await this.makeOpenRouterRequest(messages)
+        const response = await this.makeOpenRouterRequest(messages)
+        return this.validateRussianResponse(response)
       } catch (openRouterError) {
         console.error('Both providers failed:', { groqError, openRouterError })
         return 'Извините, в данный момент AI-сервис недоступен. Попробуйте позже.'
