@@ -48,7 +48,16 @@ export default function Chat({ messages, setMessages }: ChatProps) {
         {messages.map((message, index) => (
           <div key={index} className={`message ${message.isUser ? 'user-message' : 'ai-message'}`}>
             <div className="message-content">
-              <div className="message-text">{message.text}</div>
+              <div className="message-text">
+                {message.isUser ? (
+                  message.text
+                ) : (
+                  <TypewriterText
+                    text={message.text}
+                    speed={30}
+                  />
+                )}
+              </div>
             </div>
           </div>
         ))}
