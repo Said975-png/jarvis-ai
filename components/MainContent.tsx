@@ -20,9 +20,9 @@ export default function MainContent() {
           
           <div className="input-section">
             <div className="input-container">
-              <input 
-                type="text" 
-                placeholder="Ask v0 to build..." 
+              <input
+                type="text"
+                placeholder="Ask J1 to build..."
                 className="main-input"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
@@ -36,7 +36,7 @@ export default function MainContent() {
               </button>
             </div>
             <div className="upgrade-prompt">
-              Upgrade to Team to unlock all of v0&apos;s features and more credits
+              Upgrade to Team to unlock all of J1&apos;s features and more credits
               <button className="upgrade-plan-btn">Upgrade Plan</button>
             </div>
           </div>
