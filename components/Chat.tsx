@@ -77,6 +77,36 @@ export default function Chat({ messages, setMessages }: ChatProps) {
                   />
                 )}
               </div>
+              {message.imageUrl && (
+                <div className="message-image">
+                  <img
+                    src={message.imageUrl}
+                    alt="Сгенерированное изображение"
+                    style={{
+                      maxWidth: '400px',
+                      maxHeight: '400px',
+                      borderRadius: '8px',
+                      marginTop: '10px',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                      // Открываем изображение в полном размере
+                      const imageWindow = window.open('', '_blank')
+                      if (imageWindow) {
+                        imageWindow.document.write(`
+                          <html>
+                            <head><title>Изображение</title></head>
+                            <body style="margin:0; background:#000; display:flex; justify-content:center; align-items:center; min-height:100vh;">
+                              <img src="${message.imageUrl}" style="max-width:100%; max-height:100%; object-fit:contain;" alt="Изображение"/>
+                            </body>
+                          </html>
+                        `)
+                        imageWindow.document.close()
+                      }
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         ))}
