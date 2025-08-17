@@ -62,12 +62,6 @@ export default function Sidebar({ onNewChat }: SidebarProps) {
             </div>
           </div>
 
-          <div className="generate-image-section">
-            <button className="generate-image-btn">
-              <span className="generate-icon">◯</span>
-              Generate image
-            </button>
-          </div>
         </div>
       </div>
     </aside>

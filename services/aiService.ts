@@ -6,11 +6,19 @@ interface AIMessage {
 class AIService {
   private openrouterKeys: string[]
   private groqKey: string
+  private huggingfaceToken: string
   private currentKeyIndex: number = 0
 
   constructor() {
     this.openrouterKeys = process.env.OPENROUTER_API_KEYS?.split(',') || []
     this.groqKey = process.env.GROQ_API_KEY || ''
+    this.huggingfaceToken = process.env.HUGGINGFACE_TOKEN || ''
+
+    // Debug logging
+    console.log('AI Service initialized:')
+    console.log('- OpenRouter keys count:', this.openrouterKeys.length)
+    console.log('- Groq key available:', !!this.groqKey)
+    console.log('- HuggingFace token available:', !!this.huggingfaceToken)
   }
 
   private getNextOpenRouterKey(): string {
@@ -24,16 +32,16 @@ class AIService {
   }
 
   private validateRussianResponse(response: string): string {
-    // Проверяем и испра��ляем символы не из кириллицы
-    const cleanResponse = response
-      .replace(/[^\u0400-\u04FF\u0500-\u052F\s\d\p{P}]/gu, '') // Удаляем не-кириллические символы кроме пробелов, цифр и пунктуации
-      .replace(/\s+/g, ' ') // Убираем лишние пробелы
-      .trim()
-
-    // Если ответ стал слишком коротким после очистки, возвращаем стандартный ответ
-    if (cleanResponse.length < 10) {
-      return 'Привет! Я Jarvis, ваш помощник в разработке. Как могу помочь?'
+    // НЕ ЧИСТИМ текст слишком агрессивно - это портит кодировку!
+    // Просто проверяем базовую структуру ответа
+    if (!response || response.length < 3) {
+      return 'Привет! Как дела? 😊'
     }
+
+    // Убираем только явно лишние пробелы
+    const cleanResponse = response
+      .replace(/\s+/g, ' ') // Убираем множественные пробелы
+      .trim()
 
     return cleanResponse
   }
@@ -41,35 +49,45 @@ class AIService {
   private async makeOpenRouterRequest(messages: AIMessage[]): Promise<string> {
     const systemPrompt: AIMessage = {
       role: 'system',
-      content: `You are Jarvis, a smart AI assistant designed to help users with development and creating projects.
+      content: `Ты Jarvis - простой и дружелюбный AI помощник.
 
-CRITICAL LANGUAGE REQUIREMENTS:
-- Respond EXCLUSIVELY in Russian language (русский язык)
-- Use ONLY Cyrillic characters (кириллица)
-- Never mix languages or use characters from other alphabets
-- Never use Chinese, English, or any other language characters
-- All words must be in proper Russian
+ГЛАВНОЕ ПРАВИЛО:
+- Отвечай МАКСИМАЛЬНО КОРОТКО и ЕСТЕСТВЕ��НО
+- Как обычный человек в переписке
+- НИКОГДА не задавай много вопросов подряд
+- ОДИН ответ = ОДНА мысль
 
-Your personality:
-- Be friendly and professional
-- Help with programming, design, and technical questions
-- If you don't know the exact answer, be honest about it
-- Suggest practical solutions and code examples
-- Use modern technologies and best practices
+ПРИМЕРЫ ХОРОШИХ ОТВЕТОВ:
+- "Привет!" / "Привет! Как дела?"
+- "Отлично! А у тебя как?"
+- "Конечно, помогу!"
+- "Не знаю, но могу поискать"
 
-Context: You are in a v0.dev-like interface, so users expect help with creating web applications and interfaces.
+ПРИМЕРЫ ПЛОХИХ ОТВЕТОВ:
+- "Привет! Как дела? Рад видеть! Все отлично! А как ты?"
+- Длинные объяснения без запроса
+- Много вопросов в одном сообщении
 
-Remember: Write everything in Russian using only Cyrillic alphabet. No exceptions.`
+ЯЗЫК:
+- Т��ЛЬКО русский кириллицей
+- Простые слова
+- Как в обычной переписке
+
+ТЕМЫ: отвечай на любые вопросы просто и по делу.`
     }
 
     const allMessages = [systemPrompt, ...messages]
 
-    // Список надежных бесплатных моделей в порядке приоритета
+    // Самые умные бесплатные модели без лимитов
     const models = [
-      'mistralai/mistral-7b-instruct:free',
-      'huggingface/zephyr-7b-beta:free',
-      'openchat/openchat-7b:free',
-      'gryphe/mythomist-7b:free'
+      'meta-llama/llama-3.1-8b-instruct:free', // Топ бесплатная LLaMA 3.1
+      'microsoft/wizardlm-2-8x22b:free',       // Супер умная бесплатная
+      'openchat/openchat-7b:free',              // Очень умная для чата
+      'huggingface/zephyr-7b-beta:free',        // Отличная ��ля разговоров
+      'mistralai/mistral-7b-instruct:free',     // Надежная Mistral
+      'gryphe/mythomist-7b:free',               // Креативная и умная
+      'nousresearch/nous-capybara-7b:free',     // Умная Nous
+      'teknium/openhermes-2.5-mistral-7b:free', // Очень хорошая для инструкций
     ]
 
     for (let modelIndex = 0; modelIndex < models.length; modelIndex++) {
@@ -83,13 +101,13 @@ Remember: Write everything in Russian using only Cyrillic alphabet. No exception
               'Authorization': `Bearer ${apiKey}`,
               'Content-Type': 'application/json',
               'HTTP-Referer': 'https://localhost:3000',
-              'X-Title': 'V0 Clone AI Assistant'
+              'X-Title': 'Jarvis AI Assistant'
             },
             body: JSON.stringify({
               model: models[modelIndex],
               messages: allMessages,
-              temperature: 0.5,
-              max_tokens: 1000,
+              temperature: 0.7,
+              max_tokens: 2000,
               top_p: 0.9,
               frequency_penalty: 0.1,
               presence_penalty: 0.1
@@ -120,35 +138,43 @@ Remember: Write everything in Russian using only Cyrillic alphabet. No exception
   private async makeGroqRequest(messages: AIMessage[]): Promise<string> {
     const systemPrompt: AIMessage = {
       role: 'system',
-      content: `You are Jarvis, a smart AI assistant designed to help users with development and creating projects.
+      content: `Ты Jarvis - простой дружелюбный AI.
 
-ABSOLUTE LANGUAGE REQUIREMENTS:
-- Respond ONLY in Russian language using Cyrillic alphabet
-- Never use characters from Chinese, English, Arabic, or any other writing systems
-- Every single character must be from the Russian Cyrillic alphabet
-- Double-check every word before responding to ensure it's proper Russian
-- If you accidentally use wrong characters, correct them immediately
+ГЛАВНОЕ:
+- Отвечай КОРОТКО и ЕСТЕСТВЕННО
+- Как обычный человек
+- НИКОГДА не пиши много в одном сообщении
+- ОДИН ответ = ОДНА мысль
 
-Your role:
-- Be friendly and professional
-- Help with programming, design, and technical questions  
-- If you don't know the exact answer, be honest about it
-- Suggest practical solutions and code examples
-- Use modern technologies and best practices
+ПРИМЕРЫ:
+- "Привет!"
+- "Отлично! А у тебя?"
+- "Конечно!"
+- "Помогу!"
 
-Context: You are in a v0.dev-like interface, so users expect help with creating web applications and interfaces.
+НЕ ДЕЛАЙ:
+- "Привет! Как дела? Рад видеть! А как ты?"
+- Длинные ответы без запроса
+- Много вопросов сразу
 
-MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characters.`
+ЯЗЫК:
+- ТОЛЬКО русский
+- Простые слова
+- Как в чате с другом
+
+Отвечай на любые темы просто и по делу.`
     }
 
     const allMessages = [systemPrompt, ...messages]
 
-    // Список моделей Groq в порядке приоритета
+    // Самые умные модели Groq (БЕЗ ЛИМИТОВ!)
     const models = [
-      'llama3-8b-8192',
-      'llama3-70b-8192',
-      'mixtral-8x7b-32768',
-      'gemma-7b-it'
+      'llama-3.1-70b-versatile',     // Топ 70B модель - очень умная!
+      'llama3-70b-8192',             // Классная 70B
+      'mixtral-8x7b-32768',          // Mixtral - супер для чата
+      'llama-3.1-8b-instant',       // Быс��рая но умная 8B
+      'llama3-8b-8192',              // Надежная 8B
+      'gemma-7b-it',                 // Gemma для разговоров
     ]
 
     for (const model of models) {
@@ -162,8 +188,8 @@ MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characte
           body: JSON.stringify({
             model: model,
             messages: allMessages,
-            temperature: 0.5,
-            max_tokens: 1000,
+            temperature: 0.7,
+            max_tokens: 2000,
             top_p: 0.9,
             stream: false,
             stop: null,
@@ -192,23 +218,40 @@ MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characte
     throw new Error('All Groq models failed')
   }
 
+  private async makeHuggingFaceRequest(messages: AIMessage[]): Promise<string> {
+    // Простой fallback без HuggingFace API для начала
+    throw new Error('HuggingFace fallback not implemented yet')
+  }
+
   async generateResponse(messages: AIMessage[]): Promise<string> {
-    // Сначала пробуем Groq (более мощная модель)
-    try {
-      const response = await this.makeGroqRequest(messages)
-      return this.validateRussianResponse(response)
-    } catch (groqError) {
-      console.log('Groq failed, trying OpenRouter...', groqError)
-      
-      // Если Groq не работает, используем OpenRouter
+    // Простая проверка: если нет ключей, возвращаем тестовый ответ
+    if (this.openrouterKeys.length === 0 && !this.groqKey) {
+      return 'Привет! Как дела? К сожалению, у меня сейчас проблемы с настройками AI. Но я все равно рад общению!'
+    }
+
+    // 1. Сначала пробуем Groq - там самые умные модели БЕЗ ЛИМИТОВ!
+    if (this.groqKey) {
+      try {
+        const response = await this.makeGroqRequest(messages)
+        return this.validateRussianResponse(response)
+      } catch (groqError) {
+        console.log('Groq failed, trying OpenRouter...', groqError)
+      }
+    }
+
+    // 2. Если Groq не работает, пробуем OpenRouter с умными бесплатными
+    if (this.openrouterKeys.length > 0) {
       try {
         const response = await this.makeOpenRouterRequest(messages)
         return this.validateRussianResponse(response)
       } catch (openRouterError) {
-        console.error('Both providers failed:', { groqError, openRouterError })
-        return 'Извините, в данный момент AI-сервис недоступен. Попробуйте позже.'
+        console.log('OpenRouter also failed...', openRouterError)
       }
     }
+
+    // 3. Если все провайдеры не работают
+    console.error('All AI providers failed')
+    return 'Привет! Как дела? К сожалению, у меня сейчас технические проблемы, но я стараюсь их решить. Попробуй чуть позже!'
   }
 }
 
