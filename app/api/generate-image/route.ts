@@ -20,6 +20,8 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Generating image with prompt:', prompt)
+    console.log('API key available:', !!apiKey)
+    console.log('API key length:', apiKey.length)
 
     // Генерируем изображение напрямую в API route
     const formData = new FormData()
