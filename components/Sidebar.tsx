@@ -18,36 +18,10 @@ export default function Sidebar({ onNewChat, onImageGenerate }: SidebarProps) {
 
     try {
       if (onImageGenerate) {
+        // Используем коллбэк если передан
         await onImageGenerate(prompt)
       } else {
-        // Генерируем изображение напрямую если коллбэк не передан
-        const response = await fetch('/api/generate-image', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ prompt }),
-        })
-
-        const data = await response.json()
-
-        if (data.success && data.imageUrl) {
-          // Открываем изображение в новом окне
-          const imageWindow = window.open('', '_blank')
-          if (imageWindow) {
-            imageWindow.document.write(`
-              <html>
-                <head><title>Сгенерированное изображение</title></head>
-                <body style="margin:0; background:#000; display:flex; justify-content:center; align-items:center; min-height:100vh;">
-                  <img src="${data.imageUrl}" style="max-width:100%; max-height:100%; object-fit:contain;" alt="Сгенерированное изображение"/>
-                </body>
-              </html>
-            `)
-            imageWindow.document.close()
-          }
-        } else {
-          alert('Ошибка генерации изображения: ' + (data.error || 'Неизвестная ошибка'))
-        }
+        alert('Функция генерации изображений не настроена')
       }
     } catch (error) {
       console.error('Error generating image:', error)
