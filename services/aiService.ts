@@ -66,16 +66,16 @@ Remember: Write everything in Russian using only Cyrillic alphabet. No exception
 
     const allMessages = [systemPrompt, ...messages]
 
-    // Топовые модели OpenRouter в порядке приоритета
+    // Надежные модели OpenRouter (сначала бесплатные, потом платные)
     const models = [
-      'deepseek/deepseek-r1-distill-llama-70b', // Новейшая 70B!
-      'meta-llama/llama-3.3-70b-instruct',      // Обновленная 70B
-      'qwen/qwen-2.5-72b-instruct',             // 72B параметров
-      'meta-llama/llama-3.1-405b-instruct',     // Гигант 405B!
-      'anthropic/claude-3.5-sonnet',            // Топ модель
-      'meta-llama/llama-3.1-70b-instruct',      // Надежная 70B
-      'qwen/qwen-2.5-7b-instruct',              // Быстрая 7B
-      'mistralai/mistral-7b-instruct:free',     // Бесплатная запасная
+      'mistralai/mistral-7b-instruct:free',     // Бесплатная надежная
+      'huggingface/zephyr-7b-beta:free',        // Бесплатная мощная
+      'openchat/openchat-7b:free',              // Бесплатная быстрая
+      'gryphe/mythomist-7b:free',               // Бесплатная творческая
+      'meta-llama/llama-3.1-8b-instruct:free', // Бесплатная LLaMA
+      'qwen/qwen-2.5-7b-instruct',             // Платная быстрая 7B
+      'meta-llama/llama-3.1-70b-instruct',     // Платная мощная 70B
+      'qwen/qwen-2.5-72b-instruct',            // Платная 72B
     ]
 
     for (let modelIndex = 0; modelIndex < models.length; modelIndex++) {
