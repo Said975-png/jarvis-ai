@@ -8,46 +8,7 @@ import Header from '@/components/Header'
 
 export default function Home() {
   const [isChatMode, setIsChatMode] = useState(false)
-  const [messages, setMessages] = useState<Array<{text: string, isUser: boolean, imageUrl?: string}>>([])
-
-  const handleImageGenerate = async (prompt: string) => {
-    try {
-      const response = await fetch('/api/generate-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const data = await response.json()
-
-      if (data.success && data.imageUrl) {
-        // Переходим в чат режим и добавляем изображение
-        setIsChatMode(true)
-        setMessages([
-          { text: `Сгенерировано изображение: "${prompt}"`, isUser: true },
-          { text: 'Вот ваше изображение!', isUser: false, imageUrl: data.imageUrl }
-        ])
-      } else if (data.fallback && data.mockImageUrl) {
-        // Обрабатываем fallback изображение
-        setIsChatMode(true)
-        setMessages([
-          { text: `Запрос на изображение: "${prompt}"`, isUser: true },
-          { text: `⚠️ ${data.error}\n\nПоказываю mock изображение:`, isUser: false, imageUrl: data.mockImageUrl }
-        ])
-      } else {
-        throw new Error(data.error || 'Неизвестная ошибка генерации')
-      }
-    } catch (error) {
-      console.error('Error generating image:', error)
-      alert('Ошибка при генерации изображения: ' + (error instanceof Error ? error.message : 'Неизвестная ошибка'))
-    }
-  }
+  const [messages, setMessages] = useState<Array<{text: string, isUser: boolean}>>([])
 
   const handleStartChat = async (userMessage: string) => {
     const initialMessages = [{text: userMessage, isUser: true}]
