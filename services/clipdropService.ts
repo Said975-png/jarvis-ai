@@ -18,30 +18,40 @@ class ClipDropService {
     console.log('Generating image with prompt:', prompt)
 
     try {
-      const formData = new FormData()
-      formData.append('prompt', prompt)
+      // Используем URLSearchParams для клиент-серверных запросов
+      const body = new URLSearchParams()
+      body.append('prompt', prompt)
 
       const response = await fetch('https://clipdrop-api.co/text-to-image/v1', {
         method: 'POST',
         headers: {
           'x-api-key': this.apiKey,
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: formData,
+        body: body.toString(),
       })
 
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error('ClipDrop API error:', response.status, errorText)
-        throw new Error(`ClipDrop API error: ${response.status}`)
+        let errorMessage = `HTTP ${response.status}`
+        try {
+          const errorText = await response.text()
+          errorMessage = errorText || errorMessage
+        } catch (e) {
+          // Если не можем прочитать ошибку, используем статус
+        }
+        console.error('ClipDrop API error:', response.status, errorMessage)
+        throw new Error(`ClipDrop API error: ${errorMessage}`)
       }
 
       // ClipDrop возвращает изображение как blob
       const imageBlob = await response.blob()
-      
-      // Конвертируем blob в base64 для отображения
+
+      // Конвертируем blob в base64 для отображения (Node.js style)
       const buffer = await imageBlob.arrayBuffer()
-      const base64 = Buffer.from(buffer).toString('base64')
-      const dataUrl = `data:${imageBlob.type};base64,${base64}`
+      const uint8Array = new Uint8Array(buffer)
+      const binaryString = uint8Array.reduce((data, byte) => data + String.fromCharCode(byte), '')
+      const base64 = btoa(binaryString)
+      const dataUrl = `data:${imageBlob.type || 'image/png'};base64,${base64}`
 
       return { url: dataUrl }
     } catch (error) {
