@@ -1,35 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-
 interface SidebarProps {
   onNewChat: () => void
-  onImageGenerate?: (prompt: string) => void
 }
 
-export default function Sidebar({ onNewChat, onImageGenerate }: SidebarProps) {
-  const [isGeneratingImage, setIsGeneratingImage] = useState(false)
-
-  const handleGenerateImage = async () => {
-    const prompt = window.prompt('Опишите изображение которое хотите создать:')
-    if (!prompt) return
-
-    setIsGeneratingImage(true)
-
-    try {
-      if (onImageGenerate) {
-        // Используем коллбэк если передан
-        await onImageGenerate(prompt)
-      } else {
-        alert('Функция генерации изображений не настроена')
-      }
-    } catch (error) {
-      console.error('Error generating image:', error)
-      alert('Ошибка при генерации изображения')
-    } finally {
-      setIsGeneratingImage(false)
-    }
-  }
+export default function Sidebar({ onNewChat }: SidebarProps) {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
