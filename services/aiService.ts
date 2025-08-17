@@ -6,11 +6,13 @@ interface AIMessage {
 class AIService {
   private openrouterKeys: string[]
   private groqKey: string
+  private huggingfaceToken: string
   private currentKeyIndex: number = 0
 
   constructor() {
     this.openrouterKeys = process.env.OPENROUTER_API_KEYS?.split(',') || []
     this.groqKey = process.env.GROQ_API_KEY || ''
+    this.huggingfaceToken = process.env.HUGGINGFACE_TOKEN || ''
   }
 
   private getNextOpenRouterKey(): string {
@@ -24,7 +26,7 @@ class AIService {
   }
 
   private validateRussianResponse(response: string): string {
-    // Проверяем и испра��ляем символы не из кириллицы
+    // Проверяем и исправляем символы не из кириллицы
     const cleanResponse = response
       .replace(/[^\u0400-\u04FF\u0500-\u052F\s\d\p{P}]/gu, '') // Удаляем не-кириллические символы кроме пробелов, цифр и пунктуации
       .replace(/\s+/g, ' ') // Убираем лишние пробелы
@@ -64,12 +66,16 @@ Remember: Write everything in Russian using only Cyrillic alphabet. No exception
 
     const allMessages = [systemPrompt, ...messages]
 
-    // Список надежных бесплатных моделей в порядке приоритета
+    // Топовые модели OpenRouter в порядке приоритета
     const models = [
-      'mistralai/mistral-7b-instruct:free',
-      'huggingface/zephyr-7b-beta:free',
-      'openchat/openchat-7b:free',
-      'gryphe/mythomist-7b:free'
+      'deepseek/deepseek-r1-distill-llama-70b', // Новейшая 70B!
+      'meta-llama/llama-3.3-70b-instruct',      // Обновленная 70B
+      'qwen/qwen-2.5-72b-instruct',             // 72B параметров
+      'meta-llama/llama-3.1-405b-instruct',     // Гигант 405B!
+      'anthropic/claude-3.5-sonnet',            // Топ модель
+      'meta-llama/llama-3.1-70b-instruct',      // Надежная 70B
+      'qwen/qwen-2.5-7b-instruct',              // Быстрая 7B
+      'mistralai/mistral-7b-instruct:free',     // Бесплатная запасная
     ]
 
     for (let modelIndex = 0; modelIndex < models.length; modelIndex++) {
@@ -83,13 +89,13 @@ Remember: Write everything in Russian using only Cyrillic alphabet. No exception
               'Authorization': `Bearer ${apiKey}`,
               'Content-Type': 'application/json',
               'HTTP-Referer': 'https://localhost:3000',
-              'X-Title': 'V0 Clone AI Assistant'
+              'X-Title': 'Jarvis AI Assistant'
             },
             body: JSON.stringify({
               model: models[modelIndex],
               messages: allMessages,
-              temperature: 0.5,
-              max_tokens: 1000,
+              temperature: 0.7,
+              max_tokens: 2000,
               top_p: 0.9,
               frequency_penalty: 0.1,
               presence_penalty: 0.1
@@ -143,12 +149,16 @@ MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characte
 
     const allMessages = [systemPrompt, ...messages]
 
-    // Список моделей Groq в порядке приоритета
+    // Ультра быстрые модели Groq в порядке приоритета
     const models = [
-      'llama3-8b-8192',
-      'llama3-70b-8192',
-      'mixtral-8x7b-32768',
-      'gemma-7b-it'
+      'llama-3.3-70b-versatile',      // Новейшая 70B
+      'llama-3.1-405b-reasoning',     // 405B для сложных задач
+      'llama-3.2-90b-text-preview',  // 90B
+      'llama-3.1-70b-versatile',     // Надежная 70B
+      'llama3-70b-8192',             // Классическая 70B
+      'llama3-8b-8192',              // Быстрая 8B
+      'mixtral-8x7b-32768',          // Mixtral
+      'gemma-7b-it'                  // Gemma
     ]
 
     for (const model of models) {
@@ -162,8 +172,8 @@ MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characte
           body: JSON.stringify({
             model: model,
             messages: allMessages,
-            temperature: 0.5,
-            max_tokens: 1000,
+            temperature: 0.7,
+            max_tokens: 2000,
             top_p: 0.9,
             stream: false,
             stop: null,
@@ -192,22 +202,90 @@ MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characte
     throw new Error('All Groq models failed')
   }
 
+  private async makeHuggingFaceRequest(messages: AIMessage[]): Promise<string> {
+    if (!this.huggingfaceToken) {
+      throw new Error('HuggingFace token not available')
+    }
+
+    const systemPrompt = messages[0]?.role === 'system' ? messages[0].content : 
+      'You are Jarvis. Respond ONLY in Russian using Cyrillic alphabet.'
+    
+    const userMessages = messages.filter(msg => msg.role !== 'system')
+    const prompt = userMessages.map(msg => `${msg.role}: ${msg.content}`).join('\n') + '\nassistant:'
+
+    // Мощные бесплатные модели HuggingFace
+    const models = [
+      'microsoft/DialoGPT-large',
+      'microsoft/DialoGPT-medium',
+      'huggingface/CodeBERTa-small-v1',
+      'distilbert-base-uncased'
+    ]
+
+    for (const model of models) {
+      try {
+        const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.huggingfaceToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            inputs: prompt,
+            parameters: {
+              max_length: 1000,
+              temperature: 0.7,
+              do_sample: true,
+              return_full_text: false
+            }
+          })
+        })
+
+        if (!response.ok) {
+          console.error(`HuggingFace error with model ${model}:`, response.status)
+          continue
+        }
+
+        const data = await response.json()
+        
+        if (Array.isArray(data) && data[0] && data[0].generated_text) {
+          return data[0].generated_text
+        }
+        
+        throw new Error(`Invalid response format from HuggingFace with model ${model}`)
+      } catch (error) {
+        console.error(`HuggingFace request failed with model ${model}:`, error)
+      }
+    }
+    
+    throw new Error('All HuggingFace models failed')
+  }
+
   async generateResponse(messages: AIMessage[]): Promise<string> {
-    // Сначала пробуем Groq (более мощная модель)
+    // Приоритет: Groq (самый быстрый) -> OpenRouter (самый мощный) -> HuggingFace (запасной)
+    
+    // 1. Сначала пробуем Groq (ультра быстро)
     try {
       const response = await this.makeGroqRequest(messages)
       return this.validateRussianResponse(response)
     } catch (groqError) {
       console.log('Groq failed, trying OpenRouter...', groqError)
-      
-      // Если Groq не работает, используем OpenRouter
-      try {
-        const response = await this.makeOpenRouterRequest(messages)
-        return this.validateRussianResponse(response)
-      } catch (openRouterError) {
-        console.error('Both providers failed:', { groqError, openRouterError })
-        return 'Извините, в данный момент AI-сервис недоступен. Попробуйте позже.'
-      }
+    }
+    
+    // 2. Если Groq не работает, используем OpenRouter (самые мощные модели)
+    try {
+      const response = await this.makeOpenRouterRequest(messages)
+      return this.validateRussianResponse(response)
+    } catch (openRouterError) {
+      console.log('OpenRouter failed, trying HuggingFace...', openRouterError)
+    }
+    
+    // 3. В крайнем случае используем HuggingFace (бесплатный запасной)
+    try {
+      const response = await this.makeHuggingFaceRequest(messages)
+      return this.validateRussianResponse(response)
+    } catch (huggingfaceError) {
+      console.error('All providers failed:', { groqError: 'failed', openRouterError: 'failed', huggingfaceError })
+      return 'Извините, в данный момент AI-сервис недоступен. Попробуйте позже.'
     }
   }
 }
