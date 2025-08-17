@@ -34,14 +34,8 @@ export async function POST(request: NextRequest) {
     })
 
     if (!response.ok) {
-      let errorMessage = `HTTP ${response.status}`
-      try {
-        const errorText = await response.text()
-        errorMessage = errorText || errorMessage
-      } catch (e) {
-        // Если не можем прочитать ошибку, используем статус
-      }
-      console.error('ClipDrop API error:', response.status, errorMessage)
+      const errorMessage = `HTTP ${response.status} - ${response.statusText}`
+      console.error('ClipDrop API error:', response.status, response.statusText)
       return NextResponse.json(
         { error: `ClipDrop API error: ${errorMessage}` },
         { status: 500 }
