@@ -20,6 +20,10 @@ export default function Home() {
         body: JSON.stringify({ prompt }),
       })
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
       const data = await response.json()
 
       if (data.success && data.imageUrl) {
@@ -30,11 +34,11 @@ export default function Home() {
           { text: 'Вот ваше изображение!', isUser: false, imageUrl: data.imageUrl }
         ])
       } else {
-        alert('Ошибка генерации изображения: ' + (data.error || 'Неизвестная ошибка'))
+        throw new Error(data.error || 'Неизвестная ошибка генерации')
       }
     } catch (error) {
       console.error('Error generating image:', error)
-      alert('Ошибка при генерации изображения')
+      alert('Ошибка при генерации изображения: ' + (error instanceof Error ? error.message : 'Неизвестная ошибка'))
     }
   }
 
