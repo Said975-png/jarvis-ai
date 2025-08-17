@@ -78,16 +78,16 @@ class AIService {
 
     const allMessages = [systemPrompt, ...messages]
 
-    // Надежные модели OpenRouter (сначала бесплатные, потом платные)
+    // Самые умные бесплатные модели без лимитов
     const models = [
-      'mistralai/mistral-7b-instruct:free',     // Бесплатная надежная
-      'huggingface/zephyr-7b-beta:free',        // Бесплатная мощная
-      'openchat/openchat-7b:free',              // Бесплатная быстрая
-      'gryphe/mythomist-7b:free',               // Бесплатная творческая
-      'meta-llama/llama-3.1-8b-instruct:free', // Бесплатная LLaMA
-      'qwen/qwen-2.5-7b-instruct',             // Платная быстрая 7B
-      'meta-llama/llama-3.1-70b-instruct',     // Платная мощная 70B
-      'qwen/qwen-2.5-72b-instruct',            // Платная 72B
+      'meta-llama/llama-3.1-8b-instruct:free', // Топ бесплатная LLaMA 3.1
+      'microsoft/wizardlm-2-8x22b:free',       // Супер умная бесплатная
+      'openchat/openchat-7b:free',              // Очень умная для чата
+      'huggingface/zephyr-7b-beta:free',        // Отличная для разговоров
+      'mistralai/mistral-7b-instruct:free',     // Надежная Mistral
+      'gryphe/mythomist-7b:free',               // Креативная и умная
+      'nousresearch/nous-capybara-7b:free',     // Умная Nous
+      'teknium/openhermes-2.5-mistral-7b:free', // Очень хорошая для инструкций
     ]
 
     for (let modelIndex = 0; modelIndex < models.length; modelIndex++) {
