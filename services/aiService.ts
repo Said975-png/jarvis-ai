@@ -206,32 +206,29 @@ MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characte
   }
 
   async generateResponse(messages: AIMessage[]): Promise<string> {
-    // Приоритет: Groq (самый быстрый) -> OpenRouter (самый мощный) -> HuggingFace (запасной)
-    
-    // 1. Сначала пробуем Groq (ультра быстро)
-    try {
-      const response = await this.makeGroqRequest(messages)
-      return this.validateRussianResponse(response)
-    } catch (groqError) {
-      console.log('Groq failed, trying OpenRouter...', groqError)
-    }
-    
-    // 2. Если Groq не работает, используем OpenRouter (самые мощные модели)
+    // Приоритет: OpenRouter (бесплатные модели) -> Groq (если есть ключ)
+
+    // 1. Сначала пробуем OpenRouter с бесплатными моделями
     try {
       const response = await this.makeOpenRouterRequest(messages)
       return this.validateRussianResponse(response)
     } catch (openRouterError) {
-      console.log('OpenRouter failed, trying HuggingFace...', openRouterError)
+      console.log('OpenRouter failed, trying Groq...', openRouterError)
     }
-    
-    // 3. В крайнем случае используем HuggingFace (бесплатный запасной)
-    try {
-      const response = await this.makeHuggingFaceRequest(messages)
-      return this.validateRussianResponse(response)
-    } catch (huggingfaceError) {
-      console.error('All providers failed:', { groqError: 'failed', openRouterError: 'failed', huggingfaceError })
-      return 'Извините, в данный момент AI-сервис недоступен. Попробуйте позже.'
+
+    // 2. Если OpenRouter не работает, пробуем Groq
+    if (this.groqKey) {
+      try {
+        const response = await this.makeGroqRequest(messages)
+        return this.validateRussianResponse(response)
+      } catch (groqError) {
+        console.log('Groq also failed...', groqError)
+      }
     }
+
+    // 3. Если все провайдеры не работают
+    console.error('All AI providers failed')
+    return 'Привет! Я Jarvis, ваш помощник в разработке. К сожалению, сейчас у меня проблемы с подключением к AI-сервисам. Проверьте API ключи и попробуйте позже.'
   }
 }
 
