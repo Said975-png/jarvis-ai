@@ -149,16 +149,14 @@ MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characte
 
     const allMessages = [systemPrompt, ...messages]
 
-    // Ультра быстрые модели Groq в порядке приоритета
+    // Проверенные модели Groq в порядке приоритета
     const models = [
-      'llama-3.3-70b-versatile',      // Новейшая 70B
-      'llama-3.1-405b-reasoning',     // 405B для сложных задач
-      'llama-3.2-90b-text-preview',  // 90B
-      'llama-3.1-70b-versatile',     // Надежная 70B
-      'llama3-70b-8192',             // Классическая 70B
+      'llama3-70b-8192',             // Надежная 70B
       'llama3-8b-8192',              // Быстрая 8B
       'mixtral-8x7b-32768',          // Mixtral
-      'gemma-7b-it'                  // Gemma
+      'gemma-7b-it',                 // Gemma
+      'llama-3.1-70b-versatile',     // LLaMA 3.1 70B
+      'llama-3.1-8b-instant',       // LLaMA 3.1 8B быстрая
     ]
 
     for (const model of models) {
