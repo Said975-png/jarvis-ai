@@ -40,7 +40,7 @@ class AIService {
 
     // Если ответ стал слишком коротким после очистки, возвращаем стандартный ответ
     if (cleanResponse.length < 10) {
-      return 'Привет! Как дела? Чем могу помочь? 😊'
+      return 'Привет! Как д��ла? Чем могу помочь? 😊'
     }
 
     return cleanResponse
@@ -229,23 +229,23 @@ class AIService {
       return 'Привет! Ка�� дела? К сожалению, у меня сейчас проблемы с настройками AI. Но я все равно рад общению! 😊'
     }
 
-    // 1. Сначала пробуем OpenRouter с бесплатными моделями
-    if (this.openrouterKeys.length > 0) {
-      try {
-        const response = await this.makeOpenRouterRequest(messages)
-        return this.validateRussianResponse(response)
-      } catch (openRouterError) {
-        console.log('OpenRouter failed, trying Groq...', openRouterError)
-      }
-    }
-
-    // 2. Если OpenRouter не работает, пробуем Groq
+    // 1. Сначала пробуем Groq - там самые умные модели БЕЗ ЛИМИТОВ!
     if (this.groqKey) {
       try {
         const response = await this.makeGroqRequest(messages)
         return this.validateRussianResponse(response)
       } catch (groqError) {
-        console.log('Groq also failed...', groqError)
+        console.log('Groq failed, trying OpenRouter...', groqError)
+      }
+    }
+
+    // 2. Если Groq не работает, пробуем OpenRouter с умными бесплатными
+    if (this.openrouterKeys.length > 0) {
+      try {
+        const response = await this.makeOpenRouterRequest(messages)
+        return this.validateRussianResponse(response)
+      } catch (openRouterError) {
+        console.log('OpenRouter also failed...', openRouterError)
       }
     }
 
