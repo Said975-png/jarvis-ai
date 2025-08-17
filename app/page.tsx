@@ -33,6 +33,13 @@ export default function Home() {
           { text: `Сгенерировано изображение: "${prompt}"`, isUser: true },
           { text: 'Вот ваше изображение!', isUser: false, imageUrl: data.imageUrl }
         ])
+      } else if (data.fallback && data.mockImageUrl) {
+        // Обрабатываем fallback изображение
+        setIsChatMode(true)
+        setMessages([
+          { text: `Запрос на изображение: "${prompt}"`, isUser: true },
+          { text: `⚠️ ${data.error}\n\nПоказываю mock изображение:`, isUser: false, imageUrl: data.mockImageUrl }
+        ])
       } else {
         throw new Error(data.error || 'Неизвестная ошибка генерации')
       }
