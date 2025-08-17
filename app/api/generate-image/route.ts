@@ -1,5 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Функция для создания mock изображения когда ClipDrop недоступен
+function generateMockImage(prompt: string): string {
+  // Создаем простое SVG изображение с текстом prompt
+  const svg = `
+    <svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" fill="url(#bg)"/>
+      <rect x="20" y="20" width="472" height="472" rx="20" fill="white" fill-opacity="0.1"/>
+      <text x="256" y="200" font-family="Arial, sans-serif" font-size="24" font-weight="bold"
+            text-anchor="middle" fill="white">🎨 Mock Image</text>
+      <text x="256" y="250" font-family="Arial, sans-serif" font-size="16"
+            text-anchor="middle" fill="white" opacity="0.8">ClipDrop недоступен</text>
+      <text x="256" y="300" font-family="Arial, sans-serif" font-size="14"
+            text-anchor="middle" fill="white" opacity="0.6">Запрос: ${prompt.substring(0, 40)}${prompt.length > 40 ? '...' : ''}</text>
+      <text x="256" y="350" font-family="Arial, sans-serif" font-size="12"
+            text-anchor="middle" fill="white" opacity="0.4">Проверьте баланс ClipDrop</text>
+    </svg>
+  `
+
+  // Конвертируем SVG в base64
+  const base64 = Buffer.from(svg).toString('base64')
+  return `data:image/svg+xml;base64,${base64}`
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { prompt } = await request.json()
