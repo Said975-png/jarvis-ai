@@ -50,7 +50,7 @@ export default function Home() {
 
   return (
     <div className="app-container">
-      <Sidebar onNewChat={handleNewChat} onImageGenerate={handleImageGenerate} />
+      <Sidebar onNewChat={handleNewChat} />
       <div className="main-area">
         <Header />
         {isChatMode ? (
