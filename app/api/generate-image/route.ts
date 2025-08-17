@@ -34,10 +34,29 @@ export async function POST(request: NextRequest) {
     })
 
     if (!response.ok) {
-      const errorMessage = `HTTP ${response.status} - ${response.statusText}`
+      let userFriendlyMessage = `ClipDrop API error: ${response.status}`
+
+      // Специальные сообщения для конкретных ошибок
+      switch (response.status) {
+        case 402:
+          userFriendlyMessage = 'На аккаунте ClipDrop закончились кредиты. Проверьте баланс аккаунта.'
+          break
+        case 401:
+          userFriendlyMessage = 'Неверный API ключ ClipDrop. Проверьте настройки.'
+          break
+        case 429:
+          userFriendlyMessage = 'Превышен лимит запросов. Попробуйте позже.'
+          break
+        case 400:
+          userFriendlyMessage = 'Неверный запрос к ClipDrop API. Проверьте текст описания.'
+          break
+        default:
+          userFriendlyMessage = `ClipDrop API недоступен (${response.status} - ${response.statusText})`
+      }
+
       console.error('ClipDrop API error:', response.status, response.statusText)
       return NextResponse.json(
-        { error: `ClipDrop API error: ${errorMessage}` },
+        { error: userFriendlyMessage },
         { status: 500 }
       )
     }
