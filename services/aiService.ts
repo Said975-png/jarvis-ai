@@ -13,6 +13,12 @@ class AIService {
     this.openrouterKeys = process.env.OPENROUTER_API_KEYS?.split(',') || []
     this.groqKey = process.env.GROQ_API_KEY || ''
     this.huggingfaceToken = process.env.HUGGINGFACE_TOKEN || ''
+
+    // Debug logging
+    console.log('AI Service initialized:')
+    console.log('- OpenRouter keys count:', this.openrouterKeys.length)
+    console.log('- Groq key available:', !!this.groqKey)
+    console.log('- HuggingFace token available:', !!this.huggingfaceToken)
   }
 
   private getNextOpenRouterKey(): string {
