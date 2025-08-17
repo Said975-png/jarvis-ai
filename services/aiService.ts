@@ -201,61 +201,8 @@ MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characte
   }
 
   private async makeHuggingFaceRequest(messages: AIMessage[]): Promise<string> {
-    if (!this.huggingfaceToken) {
-      throw new Error('HuggingFace token not available')
-    }
-
-    const systemPrompt = messages[0]?.role === 'system' ? messages[0].content : 
-      'You are Jarvis. Respond ONLY in Russian using Cyrillic alphabet.'
-    
-    const userMessages = messages.filter(msg => msg.role !== 'system')
-    const prompt = userMessages.map(msg => `${msg.role}: ${msg.content}`).join('\n') + '\nassistant:'
-
-    // Мощные бесплатные модели HuggingFace
-    const models = [
-      'microsoft/DialoGPT-large',
-      'microsoft/DialoGPT-medium',
-      'huggingface/CodeBERTa-small-v1',
-      'distilbert-base-uncased'
-    ]
-
-    for (const model of models) {
-      try {
-        const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${this.huggingfaceToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            inputs: prompt,
-            parameters: {
-              max_length: 1000,
-              temperature: 0.7,
-              do_sample: true,
-              return_full_text: false
-            }
-          })
-        })
-
-        if (!response.ok) {
-          console.error(`HuggingFace error with model ${model}:`, response.status)
-          continue
-        }
-
-        const data = await response.json()
-        
-        if (Array.isArray(data) && data[0] && data[0].generated_text) {
-          return data[0].generated_text
-        }
-        
-        throw new Error(`Invalid response format from HuggingFace with model ${model}`)
-      } catch (error) {
-        console.error(`HuggingFace request failed with model ${model}:`, error)
-      }
-    }
-    
-    throw new Error('All HuggingFace models failed')
+    // Простой fallback без HuggingFace API для начала
+    throw new Error('HuggingFace fallback not implemented yet')
   }
 
   async generateResponse(messages: AIMessage[]): Promise<string> {
