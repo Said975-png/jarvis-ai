@@ -57,6 +57,19 @@ export async function POST(request: NextRequest) {
       }
 
       console.error('ClipDrop API error:', response.status, response.statusText)
+
+      // Если проблема с кредитами, предлагаем fallback
+      if (response.status === 402) {
+        return NextResponse.json(
+          {
+            error: userFriendlyMessage,
+            fallback: true,
+            mockImageUrl: generateMockImage(prompt)
+          },
+          { status: 200 } // Возвращаем 200 чтобы клиент мог обработать fallback
+        )
+      }
+
       return NextResponse.json(
         { error: userFriendlyMessage },
         { status: 500 }
