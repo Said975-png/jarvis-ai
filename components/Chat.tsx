@@ -6,7 +6,6 @@ import TypewriterText from './TypewriterText'
 interface Message {
   text: string
   isUser: boolean
-  imageUrl?: string
 }
 
 interface ChatProps {
