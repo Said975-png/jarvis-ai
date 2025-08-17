@@ -51,7 +51,7 @@ export default function Sidebar({ onNewChat, onImageGenerate }: SidebarProps) {
       }
     } catch (error) {
       console.error('Error generating image:', error)
-      alert('Ошибка пр�� генерации изображения')
+      alert('Ошибка при генерации изображения')
     } finally {
       setIsGeneratingImage(false)
     }
@@ -114,9 +114,13 @@ export default function Sidebar({ onNewChat, onImageGenerate }: SidebarProps) {
           </div>
 
           <div className="generate-image-section">
-            <button className="generate-image-btn">
-              <span className="generate-icon">◯</span>
-              Generate image
+            <button
+              className="generate-image-btn"
+              onClick={handleGenerateImage}
+              disabled={isGeneratingImage}
+            >
+              <span className="generate-icon">{isGeneratingImage ? '⟳' : '◯'}</span>
+              {isGeneratingImage ? 'Генерирую...' : 'Generate image'}
             </button>
           </div>
         </div>
