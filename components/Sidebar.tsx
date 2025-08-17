@@ -62,16 +62,6 @@ export default function Sidebar({ onNewChat }: SidebarProps) {
             </div>
           </div>
 
-          <div className="generate-image-section">
-            <button
-              className="generate-image-btn"
-              onClick={handleGenerateImage}
-              disabled={isGeneratingImage}
-            >
-              <span className="generate-icon">{isGeneratingImage ? '⟳' : '◯'}</span>
-              {isGeneratingImage ? 'Генерирую...' : 'Generate image'}
-            </button>
-          </div>
         </div>
       </div>
     </aside>
