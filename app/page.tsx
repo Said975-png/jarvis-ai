@@ -8,7 +8,35 @@ import Header from '@/components/Header'
 
 export default function Home() {
   const [isChatMode, setIsChatMode] = useState(false)
-  const [messages, setMessages] = useState<Array<{text: string, isUser: boolean}>>([])
+  const [messages, setMessages] = useState<Array<{text: string, isUser: boolean, imageUrl?: string}>>([])
+
+  const handleImageGenerate = async (prompt: string) => {
+    try {
+      const response = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
+      })
+
+      const data = await response.json()
+
+      if (data.success && data.imageUrl) {
+        // Переходим в чат режим и добавляем изображение
+        setIsChatMode(true)
+        setMessages([
+          { text: `Сгенерировано изображение: "${prompt}"`, isUser: true },
+          { text: 'Вот ваше изображение!', isUser: false, imageUrl: data.imageUrl }
+        ])
+      } else {
+        alert('Ошибка генерации изображения: ' + (data.error || 'Неизвестная ошибка'))
+      }
+    } catch (error) {
+      console.error('Error generating image:', error)
+      alert('Ошибка при генерации изображения')
+    }
+  }
 
   const handleStartChat = async (userMessage: string) => {
     const initialMessages = [{text: userMessage, isUser: true}]
