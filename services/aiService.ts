@@ -212,14 +212,19 @@ MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characte
   }
 
   async generateResponse(messages: AIMessage[]): Promise<string> {
-    // Приоритет: OpenRouter (бесплатные модели) -> Groq (если есть ключ)
+    // Простая проверка: если нет ключей, возвращаем тестовый ответ
+    if (this.openrouterKeys.length === 0 && !this.groqKey) {
+      return 'Привет! Я Jarvis. API ключи не настроены. Пожалуйста, проверьте переменные окружения OPENROUTER_API_KEYS и GROQ_API_KEY.'
+    }
 
     // 1. Сначала пробуем OpenRouter с бесплатными моделями
-    try {
-      const response = await this.makeOpenRouterRequest(messages)
-      return this.validateRussianResponse(response)
-    } catch (openRouterError) {
-      console.log('OpenRouter failed, trying Groq...', openRouterError)
+    if (this.openrouterKeys.length > 0) {
+      try {
+        const response = await this.makeOpenRouterRequest(messages)
+        return this.validateRussianResponse(response)
+      } catch (openRouterError) {
+        console.log('OpenRouter failed, trying Groq...', openRouterError)
+      }
     }
 
     // 2. Если OpenRouter не работает, пробуем Groq
@@ -234,7 +239,7 @@ MANDATORY: Write exclusively in Russian. No mixed languages. No foreign characte
 
     // 3. Если все провайдеры не работают
     console.error('All AI providers failed')
-    return 'Привет! Я Jarvis, ваш помощник в разработке. К сожалению, сейчас у меня проблемы с подключением к AI-сервисам. Проверьте API ключи и попробуйте позже.'
+    return 'Привет! Я Jarvis, ваш помощник в разработке. К сожалению, сейчас у меня проблемы с подключением к AI-сервисам. Возможно, API ключи неверные или сервисы временно недоступны.'
   }
 }
 
